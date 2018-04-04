@@ -32,14 +32,6 @@ float sig(float x, float c, float m) {
 
 void main() {
 
-//    vec2 vXY = -1. + 2. * vUV + planeSize;
-//    vXY[1] *= aspectRatio;
-//    vec2 position = floor(vXY * planeSize);
-
-//    vec2 mouseXY = -1. + 2. * mousePosition + planeSize;
-//    mouseXY[1] *= aspectRatio;
-//    vec2 mouseFinalPosition = floor(mouseXY * planeSize);
-
     vec2 dPosition = vUV - mousePosition;
 
     // Lighting calculation
