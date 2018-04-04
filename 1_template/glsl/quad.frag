@@ -48,7 +48,7 @@ void main() {
     float v = 1. / (1. + c * d2);
 
 
-    vec3 hsv = vec3(cos1(0.01 * t),
+    vec3 hsv = vec3(cos1(0.02 * t),
                     0.95,
                     0.25 + 0.75 * v);
 	gl_FragColor = vec4(hsv2rgb(hsv), 1.0);
