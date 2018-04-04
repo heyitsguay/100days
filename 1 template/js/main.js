@@ -29,10 +29,15 @@ let uniforms;
 let xSize;
 let ySize;
 
+// Mouse coordinates
+let mouseX = 0.5;
+let mouseY = 0.5;
+
 // True if WebGL is supported
 let hasWebGL = true;
 
 $(window).resize(onResize);
+$(window).mousemove(onMouseMove);
 
 $(document).ready(function() {
     loadFiles().then(onReady);
@@ -123,7 +128,11 @@ function animate() {
  * Update scene logic
  */
 function update() {
-    uniforms.t.value += elapsedTime / 1.;
+    uniforms.t.value += elapsedTime / 1000.;
+    uniforms.mousePosition.value = new THREE.Vector2(mouseX, mouseY);
+    uniforms.planeSize.value = new THREE.Vector2(0.5 / window.innerWidth,
+        0.5 / window.innerHeight);
+    uniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
 }
 
 
@@ -148,7 +157,11 @@ function loadFile(fileName) {
  */
 function buildShader() {
     uniforms = {
-        t: {value: 0.}
+        t: {value: 0.},
+        mousePosition: {value: new THREE.Vector2(mouseX, mouseY)},
+        planeSize: {value: new THREE.Vector2(0.5 / window.innerWidth,
+                                             0.5 / window.innerHeight)},
+        aspectRatio: {value: window.innerHeight / window.innerWidth}
     };
     shaderMaterial = new THREE.ShaderMaterial({
         uniforms: uniforms,
@@ -199,4 +212,16 @@ function resize() {
     // Set camera aspect ratio
     dummy_camera.aspect = window.innerWidth / window.innerHeight;
     dummy_camera.updateProjectionMatrix();
+}
+
+
+/**
+ * Handle mouse move events.
+ */
+function onMouseMove(event) {
+    let x = event.clientX;
+    let y = event.clientY;
+    mouseX = -1. + 2. * x / window.innerWidth + 0.5 / window.innerWidth;
+    mouseY = -1 + 2. * (1. - y / window.innerHeight) + 0.5 / window.innerHeight;
+    mouseY *= window.innerHeight / window.innerWidth;
 }

@@ -1,4 +1,7 @@
 uniform float t;
+uniform vec2 planeSize;
+uniform float aspectRatio;
+uniform vec2 mousePosition;
 
 varying vec2 vUV;
 
@@ -28,10 +31,25 @@ float sig(float x, float c, float m) {
 }
 
 void main() {
-    float u = vUV[0];
-    float v = vUV[1];
-    vec3 hsv = vec3(sin1(0.003 * t),
+
+//    vec2 vXY = -1. + 2. * vUV + planeSize;
+//    vXY[1] *= aspectRatio;
+//    vec2 position = floor(vXY * planeSize);
+
+//    vec2 mouseXY = -1. + 2. * mousePosition + planeSize;
+//    mouseXY[1] *= aspectRatio;
+//    vec2 mouseFinalPosition = floor(mouseXY * planeSize);
+
+    vec2 dPosition = vUV - mousePosition;
+
+    // Lighting calculation
+    float d2 = dot(dPosition, dPosition);
+    float c = exp(1.5 + 3. * cos1(0.55 * t + 2. * sin1(0.45 * t)) );
+    float v = 1. / (1. + c * d2);
+
+
+    vec3 hsv = vec3(cos1(0.01 * t),
                     0.95,
-                    0.25 + 0.75 * cos1(0.0027 * t));
+                    0.25 + 0.75 * v);
 	gl_FragColor = vec4(hsv2rgb(hsv), 1.0);
 }
