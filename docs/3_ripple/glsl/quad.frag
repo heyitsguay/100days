@@ -59,7 +59,7 @@ void main() {
     float d2 = dot(dMouse, dMouse);
     float denom = 1. / (1. + 10. * d2);
 
-    float hmod = 1. + (0.2 + 0.045 * tt) * denom;
+    float hmod = 1. + (0.1 + 0.015 * tt) * denom;
 
     float dh = sin(cos1(0.05 * rt) +
                0.3 * cos(0.25 * ut) *
