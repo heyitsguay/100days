@@ -19,8 +19,13 @@ let renderer;
 
 let quadGeometry;
 
-let mousePositionNow = new THREE.Vector2(0, 0);
-let mousePositionLast = new THREE.Vector2(-1, -1);
+let mousePositionNow = new THREE.Vector2(0.5, 0.5);
+let mousePositionLast = new THREE.Vector2(0.5, 0.5);
+
+let center = new THREE.Vector2(0.5, 0.5);
+
+let attractorPosition = new THREE.Vector2(0.5, 0.5);
+let attractorVelocity = new THREE.Vector2(0., 0.);
 
 let mainScene;
 let mainCamera;
@@ -29,7 +34,7 @@ let mainMesh;
 let mainUniforms = {
     t: {value: 0},
     screenInverse: {value: screenInverse},
-    mousePositionNow: {value: mousePositionNow},
+    attractorPosition: {value: attractorPosition},
     aspectRatio: {value: window.innerHeight / window.innerWidth}
 };
 
@@ -151,13 +156,7 @@ function animate() {
     render();
     //console.timeEnd('render');
 
-    updateMouse();
-}
 
-
-function updateMouse() {
-    mousePositionLast.x = mousePositionNow.x;
-    mousePositionLast.y = mousePositionNow.y;
 }
 
 
@@ -165,15 +164,64 @@ let startTime = new Date().getTime();
 let lastTime = startTime;
 let thisTime;
 let elapsedTime;
+let attractorTarget;
 function update() {
     thisTime = new Date().getTime();
     elapsedTime = thisTime - lastTime;
     lastTime = thisTime;
 
+    updateAttractor();
+
     mainUniforms.t.value += elapsedTime / 1000;
     mainUniforms.screenInverse.value = screenInverse;
-    mainUniforms.mousePositionNow.value = mousePositionNow;
+    mainUniforms.attractorPosition.value = attractorPosition;
     mainUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
+}
+
+
+let ticksSinceMotion = 0;
+function updateAttractor() {
+    let mouseMoved = updateMouse();
+
+    if (mouseMoved) {
+        ticksSinceMotion = 0;
+    }
+    else {
+        ticksSinceMotion += 1;
+    }
+
+    if (ticksSinceMotion < 20) {
+        attractorTarget = mousePositionNow;
+    }
+    else {
+        attractorTarget = center;
+    }
+
+    let dAttractorX = attractorPosition.x - attractorTarget.x;
+    let dAttractorY = attractorPosition.y - attractorTarget.y;
+    let vx = 0.95 * attractorVelocity.x - 0.00015 * dAttractorX;
+    let vy = 0.95 * attractorVelocity.y - 0.00015 * dAttractorY;
+    attractorVelocity.set(vx, vy);
+
+    let px = Math.max(0, Math.min(1,
+        attractorPosition.x + elapsedTime * attractorVelocity.x));
+    let py = Math.max(0, Math.min(1,
+        attractorPosition.y + elapsedTime * attractorVelocity.y));
+    attractorPosition.set(px, py);
+}
+
+
+function updateMouse() {
+    let mouseMoved = false;
+    let dMouseX = mousePositionNow.x - mousePositionLast.x;
+    let dMouseY = mousePositionNow.y - mousePositionLast.y;
+    if (dMouseX !== 0 || dMouseY !== 0) {
+        mouseMoved = true;
+    }
+    mousePositionLast.x = mousePositionNow.x;
+    mousePositionLast.y = mousePositionNow.y;
+
+    return mouseMoved;
 }
 
 

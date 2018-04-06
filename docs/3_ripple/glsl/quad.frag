@@ -3,7 +3,7 @@ precision highp int;
 
 uniform float t;
 uniform vec2 screenInverse;
-uniform vec2 mousePositionNow;
+uniform vec2 attractorPosition;
 uniform float aspectRatio;
 
 // Thanks to sam at http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl (May 19, 2015).
@@ -32,7 +32,7 @@ float sig(float x, float c, float m) {
 }
 
 void main() {
-    float tt = 1. * t;
+    float tt = t + 10.;
     vec2 uv = gl_FragCoord.xy * screenInverse;
     uv[1] *= aspectRatio;
     float u = uv[0];
@@ -60,11 +60,11 @@ void main() {
 
     float s = 0.33 + 0.53 * cos1(0.3 * tt);
 
-    vec2 dMouse = uv - vec2(mousePositionNow[0],
-                            mousePositionNow[1] * aspectRatio);
+    vec2 dMouse = uv - vec2(attractorPosition[0],
+                            attractorPosition[1] * aspectRatio);
     float d2 = dot(dMouse, dMouse);
 
-    float b = 0.1 + 0.85 / (1. + 7. * d2);
+    float b = 0.03 + 0.92 / (1. + 24. * d2);
 
 
     vec3 hsv = vec3(h, s, b);
