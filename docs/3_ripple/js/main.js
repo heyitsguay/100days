@@ -4,7 +4,6 @@ import Detector from './Detector.js';
 const shaderFiles = [
     'quad.frag',
     'quad.vert',
-    'feedback.frag'
 ];
 let shaderSources = {};
 
@@ -261,9 +260,9 @@ function onTouchMove(evt) {
 function loadFiles() {
     return $.when.apply($, shaderFiles.map(loadFile));
 }
-function loadFile(fileName) {
-    let fullName = './glsl/' + fileName;
+function loadFile(fileID) {
+    let fullName = 'https://heyitsguay.github.io/100days/3_ripple/glsl/' + fileID;
     return $.ajax(fullName).then(function(data) {
-        shaderSources[fileName] = data;
+        shaderSources[fileID] = data;
     });
 }
