@@ -64,7 +64,7 @@ void main() {
                             attractorPosition[1] * aspectRatio);
     float d2 = dot(dMouse, dMouse);
 
-    float b = 0.03 + 0.92 / (1. + 24. * d2);
+    float b = 0.03 + 0.92 / (1. + 10. * d2);
 
 
     vec3 hsv = vec3(h, s, b);
