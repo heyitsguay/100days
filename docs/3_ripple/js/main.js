@@ -262,7 +262,7 @@ function loadFiles() {
     return $.when.apply($, shaderFiles.map(loadFile));
 }
 function loadFile(fileName) {
-    let fullName = 'glsl/' + fileName;
+    let fullName = 'https://github.com/heyitsguay/100days/tree/master/docs/3_ripple/glsl/' + fileName;
     return $.ajax(fullName).then(function(data) {
         shaderSources[fileName] = data;
     });
