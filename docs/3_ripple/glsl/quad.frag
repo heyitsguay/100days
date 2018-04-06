@@ -32,21 +32,23 @@ float sig(float x, float c, float m) {
 }
 
 void main() {
-    float tt = t + 10.;
-    vec2 uv = gl_FragCoord.xy * screenInverse;
+    float tt = 1. * t + 20.;
+    vec2 uv = gl_FragCoord.xy * screenInverse - vec2(0.5, 0.5);
     uv[1] *= aspectRatio;
     float u = uv[0];
     float v = uv[1];
 
-    float theta = 6.28318530718 * mod1(0.001 * tt);
+    float theta = 6.28318530718 * mod1(0.01 * tt);
     float ct = cos(theta);
     float st = sin(theta);
 
     float ur = ct * u + st * v;
     float vr = -st * u + ct * v;
 
-    float uc = 0.75 + 0.25 * ur;
-    float vc = 0.75 + 0.25 * vr;
+    float dc = 0.75 * cos1(0.021 * tt);
+
+    float uc = dc + (1. - dc) * ur;
+    float vc = dc + (1. - dc) * vr;
 
     float ut = uc * tt;
     float vt = vc * tt;
@@ -54,14 +56,14 @@ void main() {
 
     float dh = sin(cos1(0.05 * rt) +
                0.3 * cos(0.25 * ut) *
-                     sin(vt + 2. * cos(0.25 * ut)));
+                     sin(vt + 2. * cos(0.27 * ut)));
 
     float h = mod1(0.2 + 0.02 * tt + 0.3 * dh);
 
-    float s = 0.33 + 0.53 * cos1(0.3 * tt);
+    float s = 0.33 + 0.43 * cos1(0.3 * tt);
 
-    vec2 dMouse = uv - vec2(attractorPosition[0],
-                            attractorPosition[1] * aspectRatio);
+    vec2 dMouse = uv - vec2(attractorPosition[0] - 0.5,
+                            (attractorPosition[1] - 0.5) * aspectRatio);
     float d2 = dot(dMouse, dMouse);
 
     float b = 0.03 + 0.92 / (1. + 10. * d2);
