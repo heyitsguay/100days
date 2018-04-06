@@ -38,7 +38,8 @@ let mainUniforms = {
 };
 
 
-$(document).ready(function() {
+$(function() {
+    console.log('hello?');
     loadFiles().then(main);
 });
 
@@ -258,11 +259,21 @@ function onTouchMove(evt) {
  * @returns {*}
  */
 function loadFiles() {
+    console.log('is anybody there?');
     return $.when.apply($, shaderFiles.map(loadFile));
 }
 function loadFile(fileID) {
     let fullName = 'https://heyitsguay.github.io/100days/3_ripple/glsl/' + fileID;
-    return $.ajax(fullName).then(function(data) {
+    return $.ajax({
+        url: fullName,
+        type: 'GET',
+        success: function() {
+            console.log('Got ' + fullName + ' successfully');
+        },
+        error: function() {
+            console.log('Failed to get ' + fullName);
+        }
+    }).then(function(data) {
         shaderSources[fileID] = data;
     });
 }
