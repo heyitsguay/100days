@@ -6,6 +6,8 @@ uniform vec2 screenInverse;
 uniform vec2 attractorPosition;
 uniform float aspectRatio;
 
+uniform sampler2D field;
+
 // Thanks to sam at http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl (May 19, 2015).
 const vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
 // Convert a color vec3 in HSV coordinates to a color vec3 in RGB coordinates. Assumes all coordinate ranges are [0,1].
@@ -32,8 +34,13 @@ float sig(float x, float c, float m) {
 }
 
 void main() {
-    float tt = 60. * (1. - cos(0.01745329251 * (t + 21.)));
-    vec2 uv = gl_FragCoord.xy * screenInverse - vec2(0.5, 0.5);
+    float tt = 60. * (1. - cos(0.01745329251 * (t + 35.)));
+
+    vec2 xy = gl_FragCoord.xy * screenInverse;
+
+    float f = texture2D(field, xy).r;
+
+    vec2 uv = xy - vec2(0.5, 0.5);
     uv[1] *= aspectRatio;
     float u = uv[0];
     float v = uv[1];
@@ -54,26 +61,22 @@ void main() {
     float vt = vc * tt;
     float rt = (uc * uc + vc * vc) * tt;
 
-    vec2 dMouse = uv - vec2(attractorPosition[0] - 0.5,
-                            (attractorPosition[1] - 0.5) * aspectRatio);
-    float d2 = dot(dMouse, dMouse);
-    float denom = 1. / (1. + 10. * d2);
-
-    float hmod = 1. + (0.1 + 0.015 * tt) * denom;
+    float hmod = 0.5 + (0.5 + 0.08 * tt) * f;
 
     float dh = sin(cos1(0.05 * rt) +
-               0.3 * cos(0.25 * ut) *
-                     sin(vt * hmod + 2. * cos(0.27 * ut)));
+               0.3 * cos(0.2 * ut * hmod) *
+                     sin(uv[0] * uv[1] * tt * hmod + 2. * cos(0.27 * ut)));
 
-    float h = mod1(0.2 + 0.02 * tt + 0.23 * dh);
+    float h = mod1(0.4 + 0.012 * tt + 0.21 * dh);
 
-    float s = 0.33 + 0.35 * cos1(0.3 * tt);
+    float s = 0.33 + 0.2 * cos1(0.3 * tt);
 
 
 
-    float b = 0.03 + 0.92 * denom;
+    float b = max(0., 0.04 + 0.92 * f);
 
 
     vec3 hsv = vec3(h, s, b);
 	gl_FragColor = vec4(hsv2rgb(hsv), 1.0);
+//	gl_FragColor = vec4(0., 0., f, 1.0);
 }
