@@ -1,9 +1,7 @@
-import Detector from './Detector.js';
-
 // List of shader source file names
 const shaderFiles = [
     'quad.frag',
-    'quad.vert',
+    'quad.vert'
 ];
 let shaderSources = {};
 
@@ -47,7 +45,6 @@ $(document).ready(function() {
  * Sketch on ready function.
  */
 function main() {
-    if (!Detector.webgl) Detector.addGetWebGLMessage();
 
     setupGUI();
 
@@ -122,7 +119,7 @@ function setupGL() {
         -1, 1, 0,
          1, 1, 0,
         -1, 1, 0,
-         1, -1, 0,
+         1, -1, 0
     ];
     let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
     quadGeometry.addAttribute('position', positionAttribute);
@@ -258,7 +255,6 @@ function onTouchMove(evt) {
  * @returns {*}
  */
 function loadFiles() {
-    console.log('is anybody there?');
     return $.when.apply($, shaderFiles.map(loadFile));
 }
 function loadFile(fileName) {
