@@ -34,11 +34,13 @@ float sig(float x, float c, float m) {
 }
 
 void main() {
+//    float t2 = 10. * t;
     float tt = 60. * (1. - cos(0.01745329251 * (t + 35.)));
 
     vec2 xy = gl_FragCoord.xy * screenInverse;
 
     float f = texture2D(field, xy).r;
+    float light = texture2D(field, xy).g;
 
     vec2 uv = xy - vec2(0.5, 0.5);
     uv[1] *= aspectRatio;
@@ -64,17 +66,14 @@ void main() {
     float hmod = 0.5 + (0.5 + 0.08 * tt) * f;
 
     float dh = sin(cos1(0.05 * rt) +
-               0.3 * cos(0.2 * ut * hmod) *
+               0.3 * cos(0.1 * ut * hmod) *
                      sin(uv[0] * uv[1] * tt * hmod + 2. * cos(0.27 * ut)));
 
-    float h = mod1(0.4 + 0.012 * tt + 0.21 * dh);
+    float h = mod1(0.93 + 0.21 * dh);
 
-    float s = 0.33 + 0.2 * cos1(0.3 * tt);
+    float s = 0.49;//0.33 + 0.16 * cos1(0.8 * tt);
 
-
-
-    float b = max(0., 0.04 + 0.92 * f);
-
+    float b = 0.03 + 0.92 * f;
 
     vec3 hsv = vec3(h, s, b);
 	gl_FragColor = vec4(hsv2rgb(hsv), 1.0);

@@ -29,6 +29,8 @@ void main() {
     value +=  0.03 / (1. + 50. * d);
     value = min(1., value);
 
+    float light = 1. / (1. + 20. * d * d);
 
-	gl_FragColor = vec4(value, 0.0, 0.0, 1.0);
+
+	gl_FragColor = vec4(value, light, 0.0, 1.0);
 }
