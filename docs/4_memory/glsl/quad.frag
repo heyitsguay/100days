@@ -73,7 +73,7 @@ void main() {
 
     float s = 0.49;//0.33 + 0.16 * cos1(0.8 * tt);
 
-    float b = 0.2 + 0.72 * f;
+    float b = min(1., 0.4 + 0.7 * f);
 
     vec3 hsv = vec3(h, s, b);
 	gl_FragColor = vec4(hsv2rgb(hsv), 1.0);
