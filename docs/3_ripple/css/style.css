@@ -82,7 +82,7 @@ div.fullpanel {
     padding-left: 10px;
     padding-right: 10px;
     width: 220px;
-    height: fit-content;
+    /*height: fit-content;*/
 }
 
 hr.titlebar {
