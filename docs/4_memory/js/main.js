@@ -211,8 +211,8 @@ function updateAttractor() {
 
     let dAttractorX = attractorPosition.x - attractorTarget.x;
     let dAttractorY = attractorPosition.y - attractorTarget.y;
-    let vx = 0.95 * attractorVelocity.x - 0.00005 * dAttractorX;
-    let vy = 0.95 * attractorVelocity.y - 0.00005 * dAttractorY;
+    let vx = 0.95 * attractorVelocity.x - 0.00002 * dAttractorX;
+    let vy = 0.95 * attractorVelocity.y - 0.00002 * dAttractorY;
     attractorVelocity.set(vx, vy);
 
     let px = Math.max(0, Math.min(1,
