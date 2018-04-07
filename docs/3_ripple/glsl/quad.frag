@@ -32,7 +32,7 @@ float sig(float x, float c, float m) {
 }
 
 void main() {
-    float tt = 110. * (1. - cos(0.01745329251 * (t + 18.)));
+    float tt = 60. * (1. - cos(0.01745329251 * (t + 21.)));
     vec2 uv = gl_FragCoord.xy * screenInverse - vec2(0.5, 0.5);
     uv[1] *= aspectRatio;
     float u = uv[0];
