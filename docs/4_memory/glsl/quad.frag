@@ -70,14 +70,13 @@ void main() {
                      sin(uv[0] * uv[1] * tt * hmod + 2. * cos(0.27 * ut)));
 
     float h = mod1(0.93 + 0.001 * tt + 0.21 * dh);
-    
-    float htarget = mod1(2.5 * tt);
 
-    float s = min(1., 0.33 + 0.26 * cos1(0.8 * tt) + 0.3 * exp(-20. * (h - htarget) * (h - htarget)));
+    float s = min(1., 0.33 + 0.26 * cos1(0.8 * tt));
 
     float b = min(1., 0.4 + 0.7 * f);
 
     vec3 hsv = vec3(h, s, b);
-	gl_FragColor = vec4(hsv2rgb(hsv), 1.0);
+    vec3 rgb = hsv2rgb(hsv);
+    gl_FragColor = vec4(rgb, 1.0);
 //	gl_FragColor = vec4(0., 0., f, 1.0);
 }
