@@ -71,9 +71,9 @@ void main() {
 
     float h = mod1(0.93 + 0.001 * tt + 0.21 * dh);
     
-    float htarget = mod1(0.1 * tt);
+    float htarget = mod1(0.5 * tt);
 
-    float s = min(1., 0.33 + 0.26 * cos1(0.8 * tt) + 0.4 * max(0., 1. - 15. * abs(h - htarget)));
+    float s = min(1., 0.33 + 0.26 * cos1(0.8 * tt) + 0.3 * exp(-10. * (h - htarget) * (h - htarget)));
 
     float b = min(1., 0.4 + 0.7 * f);
 
