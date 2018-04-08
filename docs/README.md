@@ -1,9 +1,5 @@
 # Day by Day
 
-**Begin**: April 3, 2018
-
----
-
 April 7, 2018: [apollo](5_apollo)
 
 April 6, 2018: [memory](4_memory)
