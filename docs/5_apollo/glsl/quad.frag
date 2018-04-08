@@ -37,7 +37,7 @@ float sig(float x, float c, float m) {
 
 void main() {
 //    float t2 = 10. * t;
-    float tt = 40. * (1. - cos(0.01745329251 * (t + 35.)));
+    float tt = 40. * (1. - cos(0.01745329251 * (t + 25.)));
 
     vec2 xy = gl_FragCoord.xy * screenInverse;
 
