@@ -71,7 +71,7 @@ void main() {
 
     float h = mod1(0.93 + 0.21 * dh);
 
-    float s = 0.33 + 0.26 * (cos1(0.8 * tt) + 0.17 * cos(12. * tt) * sin(2. * tt));
+    float s = 0.33 + 0.26 * (cos1(0.8 * tt) + 0.04 * cos(12. * tt) * sin(2. * tt));
 
     float b = min(1., 0.4 + 0.7 * f);
 
