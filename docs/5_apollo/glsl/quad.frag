@@ -68,7 +68,7 @@ void main() {
     float vt = vc * tt;
     float rt = (uc * uc + vc * vc) * tt;
 
-    float hmod = 0.5 + (0.5 + 0.08 * tt) * f;
+    float hmod = 0.33 + 4.5 * f;
 
     float dh = sin(cos1(0.05 * rt) +
                0.3 * cos(0.1 * ut * hmod) *
@@ -77,9 +77,9 @@ void main() {
     float h = mod1(0.93 + 0.21 * dh);
 
     float smod = 1. + f * f;
-    float s = min(1., (0.33 + 0.22 * cos1(0.8 * tt)) * smod);
+    float s = min(1., (f + 0.25 * cos1(0.8 * tt)) * smod);
 
-    float b = min(1., 0.2 + 0.85 * f * f);
+    float b = 1.;//min(1., 0.8 + 0.25 * f * f);
 
     vec3 hsv = vec3(h, s, b);
     vec3 rgb = hsv2rgb(hsv);
