@@ -1,9 +1,15 @@
 # Day by Day
 
-April 6, 2018: [memory](4_memory)
+**Begin**: April 3, 2018
 
-April 5, 2018: [ripple](3_ripple)
+---
 
-April 4, 2018: [failure](2_failure)
+5: [apollo](5_apollo)
 
-April 3, 2018: [template](1_template)
+4: [memory](4_memory)
+
+3: [ripple](3_ripple)
+
+2: [failure](2_failure)
+
+1: [template](1_template)
