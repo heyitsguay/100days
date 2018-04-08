@@ -44,7 +44,8 @@ let computer;
 let fieldUniforms = {
     aspectRatio: {value: window.innerHeight / window.innerWidth},
     screenInverse: {value: screenInverse},
-    attractorPosition: {value: attractorPosition}
+    attractorPosition: {value: attractorPosition},
+    attractorSpeed: {value: attractorVelocity.length()}
 };
 
 
@@ -191,6 +192,7 @@ function update() {
     fieldUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
     fieldUniforms.screenInverse.value = screenInverse;
     fieldUniforms.attractorPosition.value = attractorPosition;
+    fieldUniforms.attractorSpeed.value = attractorVelocity.length();
 }
 
 
@@ -214,8 +216,8 @@ function updateAttractor() {
 
     let dAttractorX = attractorPosition.x - attractorTarget.x;
     let dAttractorY = attractorPosition.y - attractorTarget.y;
-    let vx = 0.95 * attractorVelocity.x - 0.00002 * dAttractorX;
-    let vy = 0.95 * attractorVelocity.y - 0.00002 * dAttractorY;
+    let vx = 0.95 * attractorVelocity.x - 0.000035 * dAttractorX;
+    let vy = 0.95 * attractorVelocity.y - 0.000035 * dAttractorY;
     attractorVelocity.set(vx, vy);
 
     let px = Math.max(0, Math.min(1,
