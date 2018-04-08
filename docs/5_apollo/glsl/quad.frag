@@ -68,7 +68,7 @@ void main() {
     float vt = vc * tt;
     float rt = (uc * uc + vc * vc) * tt;
 
-    float hmod = 0.33 + 3. * f;
+    float hmod = 0.33 + (3. + 0.2 * tt) * f;
 
     float dh = sin(cos1(0.05 * rt) +
                0.3 * cos(0.1 * ut * hmod) *
