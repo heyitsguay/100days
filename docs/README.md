@@ -4,12 +4,12 @@
 
 ---
 
-5: [apollo](5_apollo)
+April 7, 2018: [apollo](5_apollo)
 
-4: [memory](4_memory)
+April 6, 2018: [memory](4_memory)
 
-3: [ripple](3_ripple)
+April 5, 2018: [ripple](3_ripple)
 
-2: [failure](2_failure)
+April 4, 2018: [failure](2_failure)
 
-1: [template](1_template)
+April 3, 2018: [template](1_template)
