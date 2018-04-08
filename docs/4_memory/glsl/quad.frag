@@ -69,9 +69,11 @@ void main() {
                0.3 * cos(0.1 * ut * hmod) *
                      sin(uv[0] * uv[1] * tt * hmod + 2. * cos(0.27 * ut)));
 
-    float h = mod1(0.93 + 0.21 * dh);
+    float h = mod1(0.93 + 0.001 * tt + 0.21 * dh);
+    
+    float htarget = mod1(0.1 * tt);
 
-    float s = 0.33 + 0.26 * cos1(0.8 * tt);
+    float s = min(1., 0.33 + 0.26 * cos1(0.8 * tt) + 0.4 * max(0., 1. - 15. * abs(h - htarget)));
 
     float b = min(1., 0.4 + 0.7 * f);
 
