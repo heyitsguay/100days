@@ -1,8 +1,6 @@
-/*feedback.frag
+precision highp float;
+precision highp int;
 
-Simple texture feedback test, using my old ComputeRenderer.
-
-*/
 uniform float aspectRatio;
 uniform vec2 screenInverse;
 uniform vec2 attractorPosition;
