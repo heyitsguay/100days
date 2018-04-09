@@ -46,7 +46,7 @@ void main() {
 
     float absx = abs(xy[0] - halfx) * screenSize[0];
     float absy = (1. - dy - xy[1]) * screenSize[1];
-    float freezeMask = float(absx > absy + 1.1 || absy < 0.5);
+    float freezeMask = float(absx > absy + 1.5 || absy < 0.5);
     float finalState = randState * (1. - freezeMask)
         + self * freezeMask;
 
