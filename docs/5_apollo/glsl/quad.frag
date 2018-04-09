@@ -42,7 +42,6 @@ void main() {
     vec2 xy = gl_FragCoord.xy * screenInverse;
 
     float f = texture2D(field, xy).r;
-    float light = texture2D(field, xy).g;
 
     xy[1] *= aspectRatio;
     vec2 mouse = vec2(mousePosition[0],
