@@ -37,12 +37,11 @@ float sig(float x, float c, float m) {
 
 void main() {
 //    float t2 = 10. * t;
-    float tt = 40. * (1. - cos(0.01745329251 * (t + 25.)));
+    float tt = 20. * (1. - cos(0.01745329251 * (t + 15.)));
 
     vec2 xy = gl_FragCoord.xy * screenInverse;
 
     float f = texture2D(field, xy).r;
-    float light = texture2D(field, xy).g;
 
     xy[1] *= aspectRatio;
     vec2 mouse = vec2(mousePosition[0],
