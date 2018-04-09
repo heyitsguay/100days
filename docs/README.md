@@ -1,6 +1,8 @@
 # Day by Day
 ---
 
+April 8, 2018: [rule30](6_rule30)
+
 April 7, 2018: [apollo](5_apollo)
 
 April 6, 2018: [memory](4_memory)
