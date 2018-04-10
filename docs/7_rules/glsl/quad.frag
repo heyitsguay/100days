@@ -45,8 +45,8 @@ void main() {
     float dAbs = texture2D(data, xy).b;
 
     float h = 0.66 - 0.5 * sin(dAbs * 0.05) * cos(0.03 * t) * sin(dot(xy, xy));
-    float s = 0.75 * exp(-0.1 * ticksSinceChange);
-    float v = min(1., 0.13 + 0.72 * f + 0.5 * exp(-0.2 * ticksSinceChange));
+    float s = 0.75 * exp(-0.01 * ticksSinceChange);
+    float v = min(1., 0.13 + 0.72 * f + 0.72 * exp(-0.02 * ticksSinceChange));
     vec3 hsv = vec3(h, s, v);
     vec3 rgb = hsv2rgb(hsv);
 
