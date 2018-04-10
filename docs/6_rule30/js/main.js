@@ -7,7 +7,7 @@ const shaderFiles = [
 let shaderSources = {};
 
 let canvas;
-let canvasScale = 0.05;
+let canvasScale = 0.1;
 let cWidth;
 let cHeight;
 let screenInverse = new THREE.Vector2(0, 0);
@@ -41,10 +41,11 @@ let mainUniforms = {
 
 let computer;
 
+let wolframScale = 1.;
 let wolframUniforms = {
     t: {value: 0},
-    screenInverse: {value: screenInverse},
-    screenSize: {value: screenSize}
+    screenInverse: {value: screenInverse.multiplyScalar(wolframScale)},
+    screenSize: {value: screenSize.multiplyScalar(wolframScale)}
 };
 
 
@@ -189,8 +190,8 @@ function update() {
     mainUniforms.data.value = computer.currentRenderTarget('data').texture;
 
     wolframUniforms.t.value += elapsedTime / 1000;
-    wolframUniforms.screenInverse.value = screenInverse;
-    wolframUniforms.screenSize.value = screenSize;
+    wolframUniforms.screenInverse.value = screenInverse.multiplyScalar(wolframScale);
+    wolframUniforms.screenSize.value = screenSize.multiplyScalar(wolframScale);
 }
 
 
@@ -235,7 +236,7 @@ function updateMouse() {
 
 let ticks = 0;
 function render() {
-    if (ticks % 20 === 0) {
+    if (ticks % 2 === 0) {
         computer.compute();
     }
     ticks += 1;
@@ -255,8 +256,8 @@ function setupComputer() {
         shaderSources['wolfram.frag'],
         wolframUniforms,
         initWolfram,
-        cWidth,
-        cHeight,
+        Math.round(wolframScale * cWidth),
+        Math.round(wolframScale * cHeight),
         THREE.NearestFilter,
         THREE.NearestFilter
     );
@@ -278,7 +279,7 @@ function initWolfram(texture) {
     }
 
     // Put a one in the top row
-    let seedLocation = 4 * Math.round(0.5 * cWidth);
+    let seedLocation = 4 * Math.round(0.5 * wolframScale *  cWidth);
     for (let i = 0; i < 4; i ++) {
         data[data.length - seedLocation + i] = 1;
     }

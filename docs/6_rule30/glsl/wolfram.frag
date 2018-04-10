@@ -34,7 +34,7 @@ void main() {
     float r3 = rand(vec3(100. * xy - vec2(0.184, 84.), t + 1.8));
 
     bool gate1 = r1 < 1e-4;
-    bool gate2 = r2 < 0.5 && r2 > 0.5 - 1e-2;;
+    bool gate2 = r2 < 0.54 && r2 > 0.54 - 1e-3;;
     bool gate3 = t > 10.;
 
     float condition = float(gate1 && gate2 && gate3);
@@ -46,7 +46,7 @@ void main() {
 
     float absx = abs(xy[0] - halfx) * screenSize[0];
     float absy = (1. - dy - xy[1]) * screenSize[1];
-    float freezeMask = float(absx > absy + 2. || absy < 0.5);
+    float freezeMask = float(screenSize[1] - gl_FragCoord.y < 1.);
     float finalState = randState * (1. - freezeMask)
         + self * freezeMask;
 
