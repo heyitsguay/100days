@@ -1,16 +1,16 @@
 # Day by Day
 ---
 
-April 9, 2018: [rules](7_rules)
+April 9: [rules](7_rules)
 
-April 8, 2018: [rule30](6_rule30)
+April 8: [rule30](6_rule30)
 
-April 7, 2018: [apollo](5_apollo)
+April 7: [apollo](5_apollo)
 
-April 6, 2018: [memory](4_memory)
+April 6: [memory](4_memory)
 
-April 5, 2018: [ripple](3_ripple)
+April 5: [ripple](3_ripple)
 
-April 4, 2018: [failure](2_failure)
+April 4: [failure](2_failure)
 
-April 3, 2018: [template](1_template)
+April 3: [template](1_template)
