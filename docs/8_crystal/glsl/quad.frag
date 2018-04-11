@@ -36,20 +36,14 @@ float sig(float x, float c, float m) {
 }
 
 void main() {
-    float tt = 40. * (1. - cos(0.01745329251 * (t + 25.)));
-
     vec2 xy = gl_FragCoord.xy * screenInverse;
 
-    float f = texture2D(data, xy).r;
-    float ticksSinceChange = texture2D(data, xy).g;
-    float dAbs = texture2D(data, xy).b;
+    float h = 0.5555;
+    float s = 0.6;
+    float v = texture2D(data, xy).r;
 
-    float h = 0.66 - 0.5 * sin(dAbs * 0.05) * cos(0.03 * t) * sin(dot(xy, xy));
-    float s = 0.75 * exp(-0.01 * ticksSinceChange);
-    float v = min(1., 0.13 + 0.72 * f + 0.72 * exp(-0.02 * ticksSinceChange));
     vec3 hsv = vec3(h, s, v);
     vec3 rgb = hsv2rgb(hsv);
 
     gl_FragColor = vec4(rgb, 1.0);
-//	gl_FragColor = vec4(0., 0., f, 1.0);
 }

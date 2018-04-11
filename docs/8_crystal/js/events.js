@@ -6,6 +6,16 @@ function onMouseMove(evt) {
 }
 
 
+function onMouseDown(evt) {
+    clicked = true;
+}
+
+
+function onMouseUp(evt) {
+    clicked = false;
+}
+
+
 function onTouchStart(evt) {
     evt.preventDefault();
     let touch = evt.touches[0];
@@ -16,11 +26,11 @@ function onTouchStart(evt) {
 }
 
 
-function onTouchMove(evt) {
-    onTouchStart(evt);
+function onTouchEnd(evt) {
+    clicked = false;
 }
 
 
-function onClick(evt) {
-    clicked = true;
+function onTouchMove(evt) {
+    onTouchStart(evt);
 }

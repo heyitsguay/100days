@@ -7,11 +7,12 @@ const shaderFiles = [
 let shaderSources = {};
 
 let canvas;
-let canvasScale = 0.1;
+let canvasScale = 0.33;
 let cWidth;
 let cHeight;
 let screenInverse = new THREE.Vector2(0, 0);
 let screenSize = new THREE.Vector2(0, 0);
+let aspectRatio = window.innerHeight / window.innerWidth;
 
 let renderer;
 
@@ -20,6 +21,9 @@ let quadGeometry;
 let mousePositionNow = new THREE.Vector2(0.5, 0.5);
 let mousePositionLast = new THREE.Vector2(0.5, 0.5);
 let clicked = false;
+let mouseRadius = 0.008;
+let mouseStrength = 0.8 / 60;
+let mouseAttributes = new THREE.Vector4(clicked, mouseRadius, mouseStrength, 0);
 
 let attractorPosition = new THREE.Vector2(0.5, 0.5);
 let attractorVelocity = new THREE.Vector2(0., 0.);
@@ -35,20 +39,21 @@ let mainUniforms = {
     screenInverse: {value: screenInverse},
     attractorPosition: {value: attractorPosition},
     mousePosition: {value: mousePositionNow},
-    aspectRatio: {value: window.innerHeight / window.innerWidth},
+    aspectRatio: {value: aspectRatio},
     ticksSinceMotion: {value: ticksSinceMotion},
     data: {value: null}
 };
 
 let computer;
 
-let wolframScale = 1.;
-let wolframUniforms = {
+let crystalScale = 1.;
+let crystalUniforms = {
     t: {value: 0},
-    screenInverse: {value: screenInverse.multiplyScalar(wolframScale)},
-    screenSize: {value: screenSize.multiplyScalar(wolframScale)},
+    screenInverse: {value: screenInverse.multiplyScalar(crystalScale)},
+    screenSize: {value: screenSize.multiplyScalar(crystalScale)},
     mousePosition: {value: mousePositionNow},
-    clicked: {value: clicked}
+    mouseAttributes: {value: mouseAttributes},
+    aspectRatio: {value: aspectRatio}
 };
 
 
@@ -57,19 +62,18 @@ $(document).ready(function() {
 });
 
 
-/**
- * Sketch on ready function.
- */
 function main() {
 
     setupGUI();
 
     canvas = document.getElementById('canvas');
     $(window).mousemove(onMouseMove);
-    $(window).click(onClick);
+    $(window).mousedown(onMouseDown);
+    $(window).mouseup(onMouseUp);
     $(window).resize(resize);
     window.addEventListener('touchstart', onTouchStart, false);
     window.addEventListener('touchmove', onTouchMove, false);
+    window.addEventListener('touchend', onTouchEnd, false);
 
     restart();
 }
@@ -94,6 +98,7 @@ function resize() {
     screenSize.y = cHeight;
     canvas.width = cWidth;
     canvas.height = cHeight;
+    aspectRatio = window.innerHeight / window.innerWidth;
 
     if (mainCamera) {
         mainCamera.aspect = cWidth / cHeight;
@@ -189,15 +194,18 @@ function update() {
     mainUniforms.screenInverse.value = screenInverse;
     mainUniforms.attractorPosition.value = attractorPosition;
     mainUniforms.mousePosition.value = mousePositionNow;
-    mainUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
+    mainUniforms.aspectRatio.value = aspectRatio;
     mainUniforms.ticksSinceMotion.value = ticksSinceMotion;
     mainUniforms.data.value = computer.currentRenderTarget('data').texture;
 
-    wolframUniforms.t.value += elapsedTime / 1000;
-    wolframUniforms.screenInverse.value = screenInverse.multiplyScalar(wolframScale);
-    wolframUniforms.screenSize.value = screenSize.multiplyScalar(wolframScale);
-    wolframUniforms.mousePosition.value = mousePositionNow;
-    wolframUniforms.clicked.value = clicked;
+    crystalUniforms.t.value += elapsedTime / 1000;
+    crystalUniforms.screenInverse.value = screenInverse.multiplyScalar(crystalScale);
+    crystalUniforms.screenSize.value = screenSize.multiplyScalar(crystalScale);
+    crystalUniforms.mousePosition.value = mousePositionNow;
+    crystalUniforms.aspectRatio.value = aspectRatio;
+
+    mouseAttributes.set(clicked, mouseRadius, mouseStrength, 0.);
+    crystalUniforms.mouseAttributes.value = mouseAttributes;
 }
 
 
@@ -242,9 +250,8 @@ function updateMouse() {
 
 let ticks = 0;
 function render() {
-    if (ticks % 2 === 0) {
+    if (ticks % 1 === 0) {
         computer.compute();
-        clicked = false;
     }
     ticks += 1;
 
@@ -261,10 +268,10 @@ function setupComputer() {
     computer.addVariable(
         'data',
         shaderSources['crystal.frag'],
-        wolframUniforms,
-        initWolfram,
-        Math.round(wolframScale * cWidth),
-        Math.round(wolframScale * cHeight),
+        crystalUniforms,
+        initCrystal,
+        Math.round(crystalScale * cWidth),
+        Math.round(crystalScale * cHeight),
         THREE.NearestFilter,
         THREE.NearestFilter
     );
@@ -278,17 +285,11 @@ function setupComputer() {
 }
 
 
-function initWolfram(texture) {
+function initCrystal(texture) {
     // Zero init
     let data = texture.image.data;
     for (let i = 0; i < data.length; i++) {
         data[i] = 0;
-    }
-
-    // Put a one in the top row
-    let seedLocation = 4 * Math.round(0.5 * wolframScale *  cWidth);
-    for (let i = 0; i < 4; i ++) {
-        data[data.length - seedLocation + i] = 1;
     }
 }
 
