@@ -1,6 +1,8 @@
 # Day by Day
 ---
 
+April 10: [crystal](8_crystal)
+
 April 9: [rules](7_rules)
 
 April 8: [rule30](6_rule30)
