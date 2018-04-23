@@ -90,7 +90,7 @@ void main() {
     // Compute saturation
     float s = min(1., (f + 0.25 * cos1(0.8 * tt)) * smod);
     // Compute brightness
-    float b = 1.;//min(1., 0.9 + 0.11 * f * f);
+    float b = min(1., 0.6 + 0.41 * f);
     // HSV color
     vec3 hsv = vec3(h, s, b);
     // Converted to RGB color
