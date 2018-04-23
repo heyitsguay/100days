@@ -1,7 +1,7 @@
 # Day by Day
 ---
 
-April 10: [crystal](8_crystal)
+April 10: [blob](8_blob)
 
 April 9: [rules](7_rules)
 
