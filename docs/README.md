@@ -1,6 +1,9 @@
 # Day by Day
+
 Began April 3, 2018
+
 ---
+
 11: [apollo](11_apollo)
 
 10: [beat](10_beat)
