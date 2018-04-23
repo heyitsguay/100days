@@ -1,18 +1,24 @@
 # Day by Day
+Began April 3, 2018
 ---
+11: [apollo](11_apollo)
 
-April 10: [blob](8_blob)
+10: [beat](10_beat)
 
-April 9: [rules](7_rules)
+9: [crystal](9_crystal)
 
-April 8: [rule30](6_rule30)
+8: [blob](8_blob)
 
-April 7: [apollo](5_apollo)
+7: [rules](7_rules)
 
-April 6: [memory](4_memory)
+6: [rule30](6_rule30)
 
-April 5: [ripple](3_ripple)
+5: [apollo](5_apollo)
 
-April 4: [failure](2_failure)
+4: [memory](4_memory)
 
-April 3: [template](1_template)
+3: [ripple](3_ripple)
+
+2: [failure](2_failure)
+
+1: [template](1_template)
