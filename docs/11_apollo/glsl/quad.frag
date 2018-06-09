@@ -84,13 +84,13 @@ void main() {
                    0.3 * cos(0.1 * (0.5 + sin1(ut)) * hmod) *
                          sin(uv[0] * uv[1] * tt * hmod + 2. * cos(0.27 * ut)));
     // Scale hue to lie between reddish and yellowish
-    float h = mod1(0.97 + 0.196666 * dh);
+    float h = mod1(0.93 + 0.21 * dh);
     // smod governs how the fragment field value affects the fragment saturation
     float smod = 1. + f * f;
     // Compute saturation
     float s = min(1., (f + 0.25 * cos1(0.8 * tt)) * smod);
     // Compute brightness
-    float b = min(1., 0.6 + 0.41 * f);
+    float b = min(1., 0.8 + 0.21 * f * f );
     // HSV color
     vec3 hsv = vec3(h, s, b);
     // Converted to RGB color

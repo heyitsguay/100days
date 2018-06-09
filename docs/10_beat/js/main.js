@@ -1,29 +1,32 @@
 let ipis = [];
-let a0 = 1.;
-let c = 0.99;
-let s = 8;
+let a0 = 3.;
+let c = 0.998;
+let s = 0.5;
 let threshold = 0.0005;
 let modeInfo = [0., 0., 0., 0.];
 
+
 let fMax = 256;
-let F = new Float32Array(fMax);
-let dF = new Float32Array(fMax);
+let F = Vector.zeros(fMax);
+let dF = Vector.zeros(fMax);
 
 function addIPI(freq, a) {
     // Round to nearest integer frequency
     let freqi = Math.round(freq);
-    let fmin = freqi - 5;
-    let fmax = freqi + 5;
+    let fmin = Math.max(0, freqi - 5);
+    let fmax = Math.min(fMax - 1, freqi + 5);
     for (let f = fmin; f <= fmax; f++) {
-        F[f] += a * Math.exp(-s * (f - freq) * (f - freq));
+        let Ff = F.get(f);
+        F.set(f, Ff + a * Math.exp(-s * (f - freq) * (f - freq)));
         if (f > 0) {
-            dF[f] = Math.sign(F[f] - F[f - 1]);
+            let dFf = dF.get(f);
+            dF.set(f, dFf + Math.sign(F.get(f) - F.get(f - 1)));
         }
     }
 }
 
 function updateF() {
-
+    F = F.map(x => c * x);
 }
 
 function updateIPIs() {
@@ -119,7 +122,9 @@ let fieldUniforms = {
 
 
 $(document).ready(function() {
+    $(window).mousedown(onMouseDown);
     test();
+    main2();
     // loadFiles().then(main);
 });
 
@@ -134,214 +139,232 @@ function test() {
         y: [16, 5, 11, 9],
         type: 'scatter'
     };
-    let data = [trace1, trace2];
-    Plotly.newPlot('plot', data);
+    let x = Array.apply(null, {length: fMax}).map(Number.call, Number);
+    let y = F.toArray();
+    Plotly.plot('plot', [{
+        x: x,
+        y: y,
+        line: {simplify: false}
+    }]);
 }
-//
-//
-// /**
-//  * Sketch on ready function.
-//  */
-// function main() {
-//
-//     setupGUI();
-//
-//     canvas = document.getElementById('canvas');
-//     $(window).mousedown(onMouseDown);
-//     $(window).resize(resize);
-//     window.addEventListener('touchstart', onTouchStart, false);
-//     restart();
-// }
-//
-//
-// /**
-//  * Setup the GUI.
-//  */
-// function setupGUI() {
-//     // stats = new Stats();
-//     // stats.showPanel(0);
-//     // document.body.appendChild(stats.domElement);
-// }
-//
-//
-// function resize() {
-//     cWidth = Math.floor(canvasScale * window.innerWidth);
-//     cHeight = Math.floor(canvasScale * window.innerHeight);
-//     screenInverse.x = 1 / cWidth;
-//     screenInverse.y = 1 / cHeight;
-//     screenSize.x = cWidth;
-//     screenSize.y = cHeight;
-//     canvas.width = cWidth;
-//     canvas.height = cHeight;
-//
-//     if (mainCamera) {
-//         mainCamera.aspect = cWidth / cHeight;
-//     }
-// }
-//
-//
-// /**
-//  * Restart the sketch.
-//  */
-// function restart() {
-//
-//     resize();
-//
-//     if (mainCamera) {
-//         mainCamera.aspect = cWidth / cHeight;
-//     }
-//
-//     // Setup WebGL structures
-//     setupGL();
-//
-//     // Animate the sketch
-//     animate();
-// }
-//
-//
-// function setupGL() {
-//     renderer = new THREE.WebGLRenderer({
-//         canvas: canvas,
-//         antialias: false});
-//     renderer.autoClear = false;
-//
-//     setupComputer();
-//
-//     // Create a simple quad geometry
-//     quadGeometry = new THREE.BufferGeometry();
-//     let positions = [
-//         -1, -1, 0,
-//          1, -1, 0,
-//         -1, 1, 0,
-//          1, 1, 0,
-//         -1, 1, 0,
-//          1, -1, 0
-//     ];
-//     let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
-//     quadGeometry.addAttribute('position', positionAttribute);
-//
-//     mainScene = new THREE.Scene();
-//     mainCamera = new THREE.PerspectiveCamera(
-//         60,
-//         cWidth / cHeight,
-//         1,
-//         1000);
-//     mainScene.add(mainCamera);
-//     mainMaterial = new THREE.RawShaderMaterial({
-//         vertexShader: shaderSources['quad.vert'],
-//         fragmentShader: shaderSources['quad.frag'],
-//         uniforms: mainUniforms
-//     });
-//     mainMesh = new THREE.Mesh(quadGeometry, mainMaterial);
-//     mainScene.add(mainMesh);
-// }
-//
-//
-// function animate() {
-//     requestAnimationFrame(animate);
-//
-//     //console.time('update');
-//     update();
-//     //console.timeEnd('update');
-//
-//     //console.time('render');
-//     render();
-//     //console.timeEnd('render');
-//
-//
-// }
-//
-//
-// let startTime = new Date().getTime();
-// let lastTime = startTime;
-// let thisTime;
-// let elapsedTime;
-// let attractorTarget;
-// function update() {
-//     thisTime = new Date().getTime();
-//     elapsedTime = thisTime - lastTime;
-//     lastTime = thisTime;
-//
-//     mainUniforms.t.value += elapsedTime / 1000;
-//     mainUniforms.screenInverse.value = screenInverse;
-//     mainUniforms.attractorPosition.value = attractorPosition;
-//     mainUniforms.mousePosition.value = mousePositionNow;
-//     mainUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
-//     mainUniforms.ticksSinceMotion.value = ticksSinceMotion;
-//     mainUniforms.field.value = computer.currentRenderTarget('field').texture;
-//
-//     fieldUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
-//     fieldUniforms.screenInverse.value = screenInverse;
-//     fieldUniforms.attractorPosition.value = attractorPosition;
-//     fieldUniforms.attractorSpeed.value = attractorVelocity.length();
-// }
-//
-//
-// function updateMouse() {
-//     let mouseMoved = false;
-//     let dMouseX = mousePositionNow.x - mousePositionLast.x;
-//     let dMouseY = mousePositionNow.y - mousePositionLast.y;
-//     if (dMouseX !== 0 || dMouseY !== 0) {
-//         mouseMoved = true;
-//     }
-//     mousePositionLast.x = mousePositionNow.x;
-//     mousePositionLast.y = mousePositionNow.y;
-//
-//     return mouseMoved;
-// }
-//
-//
-// function render() {
-//     computer.compute();
-//
-//     renderer.setSize(cWidth, cHeight);
-//     // renderer.clear();
-//     renderer.render(mainScene, mainCamera);
-//
-// }
-//
-//
-// function setupComputer() {
-//     computer = new ComputeRenderer(renderer);
-//
-//     computer.addVariable(
-//         'field',
-//         shaderSources['feedback.frag'],
-//         fieldUniforms,
-//         initField,
-//         window.innerWidth,
-//         window.innerHeight,
-//         THREE.LinearFilter,
-//         THREE.LinearFilter
-//     );
-//
-//     computer.setVariableDependencies('field', ['field']);
-//
-//     let initStatus = computer.init();
-//     if (initStatus !== null) {
-//         console.log(initStatus);
-//     }
-// }
-//
-//
-// function initField(texture) {
-//     let data = texture.image.data;
-//     for (let i = 0; i < data.length; i++) {
-//         data[i] = 0;
-//     }
-// }
-//
-//
-// /**
-//  * Load GLSL shader source code into strings.
-//  * @returns {*}
-//  */
-// function loadFiles() {
-//     return $.when.apply($, shaderFiles.map(loadFile));
-// }
-// function loadFile(fileName) {
-//     let fullName = './glsl/' + fileName;
-//     return $.ajax(fullName).then(function(data) {
-//         shaderSources[fileName] = data;
-//     });
-// }
+
+let lastTime = new Date().getTime();
+let thisTime;
+function main2() {
+    requestAnimationFrame(main2);
+
+    thisTime = new Date().getTime();
+
+    updateF();
+
+    lastTime = thisTime;
+}
+
+
+
+/**
+ * Sketch on ready function.
+ */
+function main() {
+
+    setupGUI();
+
+    canvas = document.getElementById('canvas');
+    $(window).mousedown(onMouseDown);
+    $(window).resize(resize);
+    window.addEventListener('touchstart', onTouchStart, false);
+    restart();
+}
+
+
+/**
+ * Setup the GUI.
+ */
+function setupGUI() {
+    // stats = new Stats();
+    // stats.showPanel(0);
+    // document.body.appendChild(stats.domElement);
+}
+
+
+function resize() {
+    cWidth = Math.floor(canvasScale * window.innerWidth);
+    cHeight = Math.floor(canvasScale * window.innerHeight);
+    screenInverse.x = 1 / cWidth;
+    screenInverse.y = 1 / cHeight;
+    screenSize.x = cWidth;
+    screenSize.y = cHeight;
+    canvas.width = cWidth;
+    canvas.height = cHeight;
+
+    if (mainCamera) {
+        mainCamera.aspect = cWidth / cHeight;
+    }
+}
+
+
+/**
+ * Restart the sketch.
+ */
+function restart() {
+
+    resize();
+
+    if (mainCamera) {
+        mainCamera.aspect = cWidth / cHeight;
+    }
+
+    // Setup WebGL structures
+    setupGL();
+
+    // Animate the sketch
+    animate();
+}
+
+
+function setupGL() {
+    renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: false});
+    renderer.autoClear = false;
+
+    setupComputer();
+
+    // Create a simple quad geometry
+    quadGeometry = new THREE.BufferGeometry();
+    let positions = [
+        -1, -1, 0,
+         1, -1, 0,
+        -1, 1, 0,
+         1, 1, 0,
+        -1, 1, 0,
+         1, -1, 0
+    ];
+    let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
+    quadGeometry.addAttribute('position', positionAttribute);
+
+    mainScene = new THREE.Scene();
+    mainCamera = new THREE.PerspectiveCamera(
+        60,
+        cWidth / cHeight,
+        1,
+        1000);
+    mainScene.add(mainCamera);
+    mainMaterial = new THREE.RawShaderMaterial({
+        vertexShader: shaderSources['quad.vert'],
+        fragmentShader: shaderSources['quad.frag'],
+        uniforms: mainUniforms
+    });
+    mainMesh = new THREE.Mesh(quadGeometry, mainMaterial);
+    mainScene.add(mainMesh);
+}
+
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    //console.time('update');
+    update();
+    //console.timeEnd('update');
+
+    //console.time('render');
+    render();
+    //console.timeEnd('render');
+
+
+}
+
+
+let startTime = new Date().getTime();
+let lastTime = startTime;
+let thisTime;
+let elapsedTime;
+let attractorTarget;
+function update() {
+    thisTime = new Date().getTime();
+    elapsedTime = thisTime - lastTime;
+    lastTime = thisTime;
+
+    mainUniforms.t.value += elapsedTime / 1000;
+    mainUniforms.screenInverse.value = screenInverse;
+    mainUniforms.attractorPosition.value = attractorPosition;
+    mainUniforms.mousePosition.value = mousePositionNow;
+    mainUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
+    mainUniforms.ticksSinceMotion.value = ticksSinceMotion;
+    mainUniforms.field.value = computer.currentRenderTarget('field').texture;
+
+    fieldUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
+    fieldUniforms.screenInverse.value = screenInverse;
+    fieldUniforms.attractorPosition.value = attractorPosition;
+    fieldUniforms.attractorSpeed.value = attractorVelocity.length();
+}
+
+
+function updateMouse() {
+    let mouseMoved = false;
+    let dMouseX = mousePositionNow.x - mousePositionLast.x;
+    let dMouseY = mousePositionNow.y - mousePositionLast.y;
+    if (dMouseX !== 0 || dMouseY !== 0) {
+        mouseMoved = true;
+    }
+    mousePositionLast.x = mousePositionNow.x;
+    mousePositionLast.y = mousePositionNow.y;
+
+    return mouseMoved;
+}
+
+
+function render() {
+    computer.compute();
+
+    renderer.setSize(cWidth, cHeight);
+    // renderer.clear();
+    renderer.render(mainScene, mainCamera);
+
+}
+
+
+function setupComputer() {
+    computer = new ComputeRenderer(renderer);
+
+    computer.addVariable(
+        'field',
+        shaderSources['feedback.frag'],
+        fieldUniforms,
+        initField,
+        window.innerWidth,
+        window.innerHeight,
+        THREE.LinearFilter,
+        THREE.LinearFilter
+    );
+
+    computer.setVariableDependencies('field', ['field']);
+
+    let initStatus = computer.init();
+    if (initStatus !== null) {
+        console.log(initStatus);
+    }
+}
+
+
+function initField(texture) {
+    let data = texture.image.data;
+    for (let i = 0; i < data.length; i++) {
+        data[i] = 0;
+    }
+}
+
+
+/**
+ * Load GLSL shader source code into strings.
+ * @returns {*}
+ */
+function loadFiles() {
+    return $.when.apply($, shaderFiles.map(loadFile));
+}
+function loadFile(fileName) {
+    let fullName = './glsl/' + fileName;
+    return $.ajax(fullName).then(function(data) {
+        shaderSources[fileName] = data;
+    });
+}

@@ -5,6 +5,7 @@ function beat() {
     tLast = tNow;
     console.log(freq);
     addIPI(freq, a0);
+    console.log(F.max());
 }
 
 function onMouseDown(evt) {

@@ -1,16 +1,17 @@
 // List of shader source file names
 const shaderFiles = [
     'quad.frag',
-    'quad.vert'
+    'quad.vert',
+    'diffuse.frag'
 ];
 let shaderSources = {};
 
 let canvas;
-let canvasScale = 1.;
 let cWidth;
 let cHeight;
 let screenInverse = new THREE.Vector2(0, 0);
 let screenSize = new THREE.Vector2(0, 0);
+let screenInfo = new THREE.Vector4(0, 0, 0, 0);
 
 let renderer;
 
@@ -18,21 +19,31 @@ let quadGeometry;
 
 let mousePositionNow = new THREE.Vector2(0.5, 0.5);
 let mousePositionLast = new THREE.Vector2(0.5, 0.5);
+let mousePosition
 
-let center = new THREE.Vector2(0.5, 0.5);
-
-let attractorPosition = new THREE.Vector2(0.5, 0.5);
-let attractorVelocity = new THREE.Vector2(0., 0.);
+let ticksSinceMotion = 0;
 
 let mainScene;
 let mainCamera;
 let mainMaterial;
 let mainMesh;
 let mainUniforms = {
-    t: {value: 8.},
+    t: {value: 0},
     screenInverse: {value: screenInverse},
     attractorPosition: {value: attractorPosition},
-    aspectRatio: {value: window.innerHeight / window.innerWidth}
+    mousePosition: {value: mousePositionNow},
+    aspectRatio: {value: window.innerHeight / window.innerWidth},
+    ticksSinceMotion: {value: ticksSinceMotion},
+    field: {value: null}
+};
+
+let computer;
+
+let diffuseUniforms = {
+    aspectRatio: {value: window.innerHeight / window.innerWidth},
+    screenInverse: {value: screenInverse},
+    attractorPosition: {value: attractorPosition},
+    attractorSpeed: {value: attractorVelocity.length()}
 };
 
 
@@ -109,7 +120,7 @@ function setupGL() {
         antialias: false});
     renderer.autoClear = false;
 
-    // setupComputer();
+    setupComputer();
 
     // Create a simple quad geometry
     quadGeometry = new THREE.BufferGeometry();
@@ -123,6 +134,16 @@ function setupGL() {
     ];
     let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
     quadGeometry.addAttribute('position', positionAttribute);
+    let uv = [
+        0, 0, 0,
+        1, 0, 0,
+        0, 1, 0,
+        1, 1, 0,
+        0, 1, 0,
+        1, 0, 0
+    ];
+    let uvAttribute = new THREE.Float32BufferAttribute(uv, 3);
+    quadGeometry.addAttribute('uv', uvAttribute);
 
     mainScene = new THREE.Scene();
     mainCamera = new THREE.PerspectiveCamera(
@@ -171,11 +192,18 @@ function update() {
     mainUniforms.t.value += elapsedTime / 1000;
     mainUniforms.screenInverse.value = screenInverse;
     mainUniforms.attractorPosition.value = attractorPosition;
+    mainUniforms.mousePosition.value = mousePositionNow;
     mainUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
+    mainUniforms.ticksSinceMotion.value = ticksSinceMotion;
+    mainUniforms.field.value = computer.currentRenderTarget('field').texture;
+
+    fieldUniforms.aspectRatio.value = window.innerHeight / window.innerWidth;
+    fieldUniforms.screenInverse.value = screenInverse;
+    fieldUniforms.attractorPosition.value = attractorPosition;
+    fieldUniforms.attractorSpeed.value = attractorVelocity.length();
 }
 
 
-let ticksSinceMotion = 0;
 function updateAttractor() {
     let mouseMoved = updateMouse();
 
@@ -186,17 +214,18 @@ function updateAttractor() {
         ticksSinceMotion += 1;
     }
 
-    if (ticksSinceMotion < 20) {
-        attractorTarget = mousePositionNow;
-    }
-    else {
-        attractorTarget = center;
-    }
+    attractorTarget = mousePositionNow;
+    // if (ticksSinceMotion < 20) {
+    //     attractorTarget = mousePositionNow;
+    // }
+    // else {
+    //     attractorTarget = center;
+    // }
 
     let dAttractorX = attractorPosition.x - attractorTarget.x;
     let dAttractorY = attractorPosition.y - attractorTarget.y;
-    let vx = 0.95 * attractorVelocity.x - 0.00015 * dAttractorX;
-    let vy = 0.95 * attractorVelocity.y - 0.00015 * dAttractorY;
+    let vx = 0.95 * attractorVelocity.x - 0.000035 * dAttractorX;
+    let vy = 0.95 * attractorVelocity.y - 0.000035 * dAttractorY;
     attractorVelocity.set(vx, vy);
 
     let px = Math.max(0, Math.min(1,
@@ -222,10 +251,43 @@ function updateMouse() {
 
 
 function render() {
+    computer.compute();
 
     renderer.setSize(cWidth, cHeight);
-    renderer.clear();
+    // renderer.clear();
     renderer.render(mainScene, mainCamera);
+
+}
+
+
+function setupComputer() {
+    computer = new ComputeRenderer(renderer);
+
+    computer.addVariable(
+        'field',
+        shaderSources['diffuse.frag'],
+        fieldUniforms,
+        initField,
+        window.innerWidth,
+        window.innerHeight,
+        THREE.LinearFilter,
+        THREE.LinearFilter
+    );
+
+    computer.setVariableDependencies('field', ['field']);
+
+    let initStatus = computer.init();
+    if (initStatus !== null) {
+        console.log(initStatus);
+    }
+}
+
+
+function initField(texture) {
+    let data = texture.image.data;
+    for (let i = 0; i < data.length; i++) {
+        data[i] = 0;
+    }
 }
 
 
