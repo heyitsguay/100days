@@ -19,7 +19,7 @@ let quadGeometry;
 
 let mousePositionNow = new THREE.Vector2(0.5, 0.5);
 let mousePositionLast = new THREE.Vector2(0.5, 0.5);
-let mousePosition
+let mousePosition;
 
 let ticksSinceMotion = 0;
 

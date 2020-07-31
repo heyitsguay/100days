@@ -40,13 +40,16 @@ void main() {
 
     vec2 xy = gl_FragCoord.xy * screenInverse;
 
-    float f = texture2D(data, xy).r;
-    float ticksSinceChange = texture2D(data, xy).g;
-    float dAbs = texture2D(data, xy).b;
+    vec4 sample = texture2D(data, xy);
 
-    float h = 0.66 - 0.5 * sin(dAbs * 0.05) * cos(0.03 * t) * sin(dot(xy, xy));
-    float s = 0.75 * exp(-0.01 * ticksSinceChange);
-    float v = min(1., 0.13 + 0.72 * f + 0.72 * exp(-0.02 * ticksSinceChange));
+    float f = sample.r;
+    float ticksSinceChange = sample.g;
+    float dAbs = sample.b;
+    float rule = sample.a;
+
+    float h = mod(mod(0.66 + cos(0.09 * t) - 0.2 * sin(dAbs * 0.05) * cos(0.02 * t) * sin(dot(xy * vec2(cos(0.3 * t), sin(0.3 * t)), xy)), 1.) + 1., 1.);
+    float s = 0.75 * exp(-0.006 * ticksSinceChange);
+    float v = min(1., 0.13 + 0.72 * f + 0.72 * exp(-0.012 * ticksSinceChange));
     vec3 hsv = vec3(h, s, v);
     vec3 rgb = hsv2rgb(hsv);
 

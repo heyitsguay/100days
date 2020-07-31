@@ -7,6 +7,7 @@ uniform vec2 screenSize;
 uniform vec2 mousePosition;
 uniform float clicked;
 uniform sampler2D data;
+uniform float updateState;
 
 const float NUM_RULES = 3.;
 
@@ -30,6 +31,7 @@ void main() {
     float ticksSinceChange = texture2D(data, xy).g;
     float ruleState = texture2D(data, xy).a;
 
+
     bool state0 = left ^^ (center || right);
     bool state1 = (left ^^ center ^^ right) && !center;
     bool state2 = (left ^^ center ^^ right);
@@ -47,7 +49,7 @@ void main() {
 
     float absx = abs(xy[0] - halfx) * screenSize[0];
     float absy = (1. - dy - xy[1]) * screenSize[1];
-    float freezeMask = float(screenSize[1] - gl_FragCoord.y < 1.);
+    float freezeMask = float(screenSize[1] - gl_FragCoord.y < 1. || updateState == 0.);
     float finalState = state * (1. - freezeMask)
         + self * freezeMask;
 

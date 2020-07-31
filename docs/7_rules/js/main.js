@@ -48,7 +48,8 @@ let wolframUniforms = {
     screenInverse: {value: screenInverse.multiplyScalar(wolframScale)},
     screenSize: {value: screenSize.multiplyScalar(wolframScale)},
     mousePosition: {value: mousePositionNow},
-    clicked: {value: clicked}
+    clicked: {value: clicked},
+    updateState: {value: 0.}
 };
 
 
@@ -179,6 +180,7 @@ let thisTime;
 let elapsedTime;
 let attractorTarget;
 function update() {
+    let updateCounter = 0;
     thisTime = new Date().getTime();
     elapsedTime = thisTime - lastTime;
     lastTime = thisTime;
@@ -198,6 +200,8 @@ function update() {
     wolframUniforms.screenSize.value = screenSize.multiplyScalar(wolframScale);
     wolframUniforms.mousePosition.value = mousePositionNow;
     wolframUniforms.clicked.value = clicked;
+    wolframUniforms.updateState.value = updateCounter == 0 ? 1. : 0.;
+    updateCounter = (updateCounter + 1) % 10;
 }
 
 
@@ -282,7 +286,11 @@ function initWolfram(texture) {
     // Zero init
     let data = texture.image.data;
     for (let i = 0; i < data.length; i++) {
-        data[i] = 0;
+        if (i % 4 == 1) {
+            data[i] = 1000000;
+        } else {
+            data[i] = 0;
+        }
     }
 
     // Put a one in the top row
